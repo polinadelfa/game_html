@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поймай квадрат</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        #game-container {
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            background-color: white;
+            border: 2px solid #333;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        
+        #target {
+            width: 50px;
+            height: 50px;
+            background-color: #ff5252;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        
+        #score {
+            font-size: 24px;
+            margin: 20px 0;
+            color: #333;
+        }
+        
+        #start-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        #start-btn:hover {
+            background-color: #45a049;
+        }
+        
+        #timer {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Поймай квадрат</h1>
+    <p>Кликай на красный квадрат, чтобы заработать очки!</p>
+    
+    <div id="timer">Время: 30</div>
+    <div id="score">Очки: 0</div>
+    <button id="start-btn">Начать игру</button>
+    
+    <div id="game-container">
+        <div id="target"></div>
+    </div>
+
+    <script>
+        const target = document.getElementById('target');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('start-btn');
+        const gameContainer = document.getElementById('game-container');
+        
+        let score = 0;
+        let timeLeft = 30;
+        let gameInterval;
+        let timerInterval;
+        let isGameRunning = false;
+        
+        // Функция для перемещения квадрата
+        function moveTarget() {
+            const containerWidth = gameContainer.clientWidth - target.clientWidth;
+            const containerHeight = gameContainer.clientHeight - target.clientHeight;
+            
+            const randomX = Math.floor(Math.random() * containerWidth);
+            const randomY = Math.floor(Math.random() * containerHeight);
+            
+            target.style.left = randomX + 'px';
+            target.style.top = randomY + 'px';
+        }
+        
+        // Обработчик клика по квадрату
+        target.addEventListener('click', function() {
+            if (!isGameRunning) return;
+            
+            score++;
+            scoreDisplay.textContent = 'Очки: ' + score;
+            moveTarget();
+        });
+        
+        // Функция старта игры
+        function startGame() {
+            if (isGameRunning) return;
+            
+            score = 0;
+            timeLeft = 30;
+            isGameRunning = true;
+            
+            scoreDisplay.textContent = 'Очки: ' + score;
+            timerDisplay.textContent = 'Время: ' + timeLeft;
+            
+            moveTarget();
+            
+            // Таймер игры
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                timerDisplay.textContent = 'Время: ' + timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+            
+            // Автоматическое перемещение каждые 1.5 секунды
+            gameInterval = setInterval(moveTarget, 1500);
+        }
+        
+        // Функция окончания игры
+        function endGame() {
+            isGameRunning = false;
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            
+            alert('Игра окончена! Ваш счет: ' + score);
+        }
+        
+        // Кнопка старта
+        startBtn.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
